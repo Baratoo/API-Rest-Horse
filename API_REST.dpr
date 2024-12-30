@@ -5,19 +5,28 @@ program API_REST;
 {$R *.res}
 
 uses Horse, Horse.Jhonson, Horse.BasicAuthentication, Horse.HandleException,
-     Horse.Commons, Horse.octetStream, System.JSON, System.SysUtils, System.Classes;
+     Horse.Commons, Horse.octetStream, Horse.Logger, System.JSON, Horse.Logger.Provider.LogFile,
+     System.SysUtils, System.Classes;
 
 var
   App : THorse;
   Users : TJSONArray;
+  LLogFileConfig : THorseLoggerLogFileConfig;
 
 begin
+
+   LLogFileConfig := THorseLoggerLogFileConfig.New
+  .SetLogFormat('[${time}] ${response_status} ${request_method}')
+  .SetDir('E:\KaiqueBarato\API Rest');
+
+  THorseLoggerManager.RegisterProvider(THorseLoggerProviderLogFile.New(LLogFileConfig));
 
   App := THorse.Create;
 
   App.Use(Jhonson);
   App.Use(HandleException);
   App.Use(octetStream);
+  App.Use(THorseLoggerManager.HorseCallback);
   App.Use(HorseBasicAuthentication(
     function(const AUsername, APassword: string): Boolean
       begin
