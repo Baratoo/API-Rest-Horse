@@ -5,7 +5,7 @@ program API_REST;
 {$R *.res}
 
 uses Horse, Horse.Jhonson, Horse.BasicAuthentication, Horse.HandleException,
-     Horse.Commons, Horse.octetStream, System.JSON, System.SysUtils, System.Classes;
+     Horse.Commons , System.JSON, System.SysUtils, System.Classes;
 
 var
   App : THorse;
@@ -17,7 +17,6 @@ begin
 
   App.Use(Jhonson);
   App.Use(HandleException);
-  App.Use(octetStream);
   App.Use(HorseBasicAuthentication(
     function(const AUsername, APassword: string): Boolean
       begin
@@ -46,7 +45,7 @@ begin
       Res.Send<TStream>(LStream);
     end);
 
-    App.Post('/stream',
+    App.Post('/EnviaStream',
       procedure(Req: THorseRequest; Res: THorseResponse; Next: TProc)
       var
         LStream: TMemoryStream;

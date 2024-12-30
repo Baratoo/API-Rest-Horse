@@ -46,7 +46,7 @@ begin
       Res.Send<TStream>(LStream);
     end);
 
-    App.Post('/stream',
+    App.Post('/EnviaStream',
       procedure(Req: THorseRequest; Res: THorseResponse; Next: TProc)
       var
         LStream: TMemoryStream;
