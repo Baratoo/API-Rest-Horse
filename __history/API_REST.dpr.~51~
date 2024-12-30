@@ -4,7 +4,8 @@ program API_REST;
 
 {$R *.res}
 
-uses Horse, Horse.Jhonson, Horse.Commons , System.JSON, System.SysUtils;
+uses Horse, Horse.Jhonson, Horse.BasicAuthentication, Horse.HandleException,
+     Horse.Commons , System.JSON, System.SysUtils;
 
 var
   App : THorse;
@@ -15,8 +16,25 @@ begin
   App := THorse.Create;
 
   App.Use(Jhonson);
+  App.Use(HandleException);
+  App.Use(HorseBasicAuthentication(
+  function(const AUsername, APassword: string): Boolean
+    begin
+      Result := AUsername.Equals('root') and APassword.Equals('root');
+    end));
 
   Users := TJSONArray.Create;
+
+  App.Get('/exception',
+  procedure(Req: THorseRequest; Res: THorseResponse; Next : TProc)
+  var
+    LConteudo :TJSONObject;
+  begin
+      raise EHorseException.Create();
+      LConteudo := TJSONObject.Create;
+      LConteudo.AddPair('Nome', 'Kaique');
+      Res.Send(LConteudo);
+  end);
 
   App.Get('/users',
   procedure(Req: THorseRequest; Res: THorseResponse; Next : TProc)
@@ -40,8 +58,8 @@ begin
     id :Integer;
   begin
     id := Req.Params.Items['id'].ToInteger;
-    Users.Remove(id).Free;
-    Res.Send<TJSONAncestor>(Users.Clone).Status(THTTPStatus.Created);
+    Users.Remove(Pred(id)).Free;
+    Res.Send<TJSONAncestor>(Users.Clone).Status(THTTPStatus.NoContent);
   end);
 
 

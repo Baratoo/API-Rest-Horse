@@ -30,7 +30,7 @@ begin
   var
     LConteudo :TJSONObject;
   begin
-      raise EHorseException.New.Error('ERROR');
+      raise EHorseException.Create();
       LConteudo := TJSONObject.Create;
       LConteudo.AddPair('Nome', 'Kaique');
       Res.Send(LConteudo);
@@ -39,6 +39,7 @@ begin
   App.Get('/users',
   procedure(Req: THorseRequest; Res: THorseResponse; Next : TProc)
   begin
+    raise Exception.Create('Error Message');
     Res.Send<TJSONAncestor>(Users.Clone);
   end);
 

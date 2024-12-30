@@ -30,7 +30,7 @@ begin
   var
     LConteudo :TJSONObject;
   begin
-      raise EHorseException.New.Error('ERROR');
+      raise EHorseException.Create();
       LConteudo := TJSONObject.Create;
       LConteudo.AddPair('Nome', 'Kaique');
       Res.Send(LConteudo);
