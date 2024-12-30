@@ -18,23 +18,23 @@ begin
   App.Use(Jhonson);
   App.Use(HandleException);
   App.Use(HorseBasicAuthentication(
-    function(const AUsername, APassword: string): Boolean
-      begin
-        Result := AUsername.Equals('root') and APassword.Equals('root');
-      end));
+  function(const AUsername, APassword: string): Boolean
+    begin
+      Result := AUsername.Equals('root') and APassword.Equals('root');
+    end));
 
   Users := TJSONArray.Create;
 
   App.Get('/exception',
-    procedure(Req: THorseRequest; Res: THorseResponse; Next : TProc)
-    var
-      LConteudo :TJSONObject;
-    begin
-        raise EHorseException.New.Error('ERROR');
-        LConteudo := TJSONObject.Create;
-        LConteudo.AddPair('Nome', 'Kaique');
-        Res.Send(LConteudo);
-    end);
+  procedure(Req: THorseRequest; Res: THorseResponse; Next : TProc)
+  var
+    LConteudo :TJSONObject;
+  begin
+      raise EHorseException.New.Error('ERROR');
+      LConteudo := TJSONObject.Create;
+      LConteudo.AddPair('Nome', 'Kaique');
+      Res.Send(LConteudo);
+  end);
 
   App.Get('/stream',
     procedure(Req: THorseRequest; Res: THorseResponse; Next: TProc)

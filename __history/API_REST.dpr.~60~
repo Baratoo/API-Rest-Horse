@@ -30,7 +30,7 @@ begin
   var
     LConteudo :TJSONObject;
   begin
-      raise EHorseException.Create();
+      raise EHorseException.New.Error('ERROR');
       LConteudo := TJSONObject.Create;
       LConteudo.AddPair('Nome', 'Kaique');
       Res.Send(LConteudo);
@@ -47,7 +47,6 @@ begin
   var
     User : TJSONObject;
   begin
-    raise Exception.Create('Error Message');
     User := Req.Body<TJSONObject>.Clone as TJSONObject;
     Users.AddElement(User);
     Res.Send<TJSONAncestor>(User.Clone).Status(THTTPStatus.Created);
