@@ -15,6 +15,7 @@ uses
   System.JSON,
   Horse.Logger.Provider.LogFile,
   Horse.Paginate,
+  Horse.Etag,
   DataSet.Serialize,
   System.SysUtils,
   System.Classes,
@@ -37,6 +38,7 @@ begin
 
   App.Use(Paginate);
   App.Use(Jhonson);
+  App.Use(ETag);
   App.Use(HandleException);
   App.Use(octetStream);
   App.Use(THorseLoggerManager.HorseCallback);
@@ -83,15 +85,21 @@ begin
       Res.Send<TStream>(LStream);
     end);
 
-    App.Post('/stream',
-      procedure(Req: THorseRequest; Res: THorseResponse; Next: TProc)
-      var
-        LStream: TMemoryStream;
-      begin
-        LStream := req.Body<TMemoryStream>;
-        LStream.SaveToFile('E:\KaiqueBarato\API Rest\img\CopyPenguins.jpg');
-        Res.Send('Imagem salva!').Status(201);
-      end);
+  App.Post('/stream',
+    procedure(Req: THorseRequest; Res: THorseResponse; Next: TProc)
+    var
+      LStream: TMemoryStream;
+    begin
+      LStream := req.Body<TMemoryStream>;
+      LStream.SaveToFile('E:\KaiqueBarato\API Rest\img\CopyPenguins.jpg');
+      Res.Send('Imagem salva!').Status(201);
+    end);
+
+  App.Get('/usersEtag',
+    procedure(Req: THorseRequest; Res: THorseResponse; Next : TProc)
+    begin
+      Res.Send<TJSONObject>(TJSONObject.Create.AddPair('Login', 'Kaique'));
+    end);
 
   App.Get('/users',
     procedure(Req: THorseRequest; Res: THorseResponse; Next : TProc)
