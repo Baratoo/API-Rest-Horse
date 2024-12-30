@@ -4,9 +4,21 @@ program API_REST;
 
 {$R *.res}
 
-uses Horse, Horse.Jhonson, Horse.BasicAuthentication, Horse.HandleException,
-     Horse.Commons, Horse.octetStream, Horse.Logger, System.JSON, Horse.Logger.Provider.LogFile,
-     System.SysUtils, System.Classes;
+uses
+  Horse,
+  Horse.Jhonson,
+  Horse.BasicAuthentication,
+  Horse.HandleException,
+  Horse.Commons,
+  Horse.octetStream,
+  Horse.Logger,
+  System.JSON,
+  Horse.Logger.Provider.LogFile,
+  Horse.Paginate,
+  DataSet.Serialize,
+  System.SysUtils,
+  System.Classes,
+  Services.Bairro in 'Services\Services.Bairro.pas' {ServicesBairro: TDataModule};
 
 var
   App : THorse;
@@ -23,6 +35,7 @@ begin
 
   App := THorse.Create;
 
+  App.Use(Paginate);
   App.Use(Jhonson);
   App.Use(HandleException);
   App.Use(octetStream);
@@ -34,6 +47,21 @@ begin
       end));
 
   Users := TJSONArray.Create;
+
+  //Como ficaria a URL com os parametros:
+  //' /Bairros?limit=10&page=1 '
+  App.Get('/Bairros',
+    procedure(Req: THorseRequest; Res: THorseResponse; Next : TProc)
+    var
+      LService : TServicesBairro;
+    begin
+      LService := TServicesBairro.Create(nil);
+      try
+        Res.Send<TJSONArray>(LService.listar.ToJSONArray())
+      finally
+        LService.Free;
+      end;
+    end);
 
   App.Get('/exception',
     procedure(Req: THorseRequest; Res: THorseResponse; Next : TProc)
